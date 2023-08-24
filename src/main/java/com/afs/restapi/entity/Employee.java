@@ -1,7 +1,11 @@
 package com.afs.restapi.entity;
 
-public class Employee {
+import javax.persistence.*;
 
+@Entity
+public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private Integer age;
