@@ -8,7 +8,6 @@ import com.afs.restapi.repository.EmployeeJpaRepository;
 import com.afs.restapi.service.CompanyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +23,6 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 public class CompanyServiceTest {
-    @Autowired
     private CompanyService companyService;
     private CompanyJpaRepository mockedCompanyRepository;
     private EmployeeJpaRepository mockedEmployeeRepository;
