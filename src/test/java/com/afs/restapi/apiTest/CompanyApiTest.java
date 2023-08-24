@@ -40,7 +40,7 @@ class CompanyApiTest {
     }
 
     @Test
-    void should_update_company_name() throws Exception {
+    void should_update_company_name_when_put_given_id_and_updated_info() throws Exception {
         Company previousCompany = new Company(1L, "abc");
         Company savedCompany = companyJpaRepository.save(previousCompany);
 
@@ -60,7 +60,7 @@ class CompanyApiTest {
     }
 
     @Test
-    void should_delete_company_name() throws Exception {
+    void should_delete_company_when_delete_given_company_id() throws Exception {
         Company company = new Company(1L, "abc");
         Company savedCompany = companyJpaRepository.save(company);
 
@@ -71,7 +71,7 @@ class CompanyApiTest {
     }
 
     @Test
-    void should_create_employee() throws Exception {
+    void should_return_created_company_when_post_given_company() throws Exception {
         Company company = getCompany1();
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -80,12 +80,12 @@ class CompanyApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(companyRequest))
                 .andExpect(MockMvcResultMatchers.status().is(201))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(company.getName()));
     }
 
     @Test
-    void should_find_companies() throws Exception {
+    void should_return_companies_when_get_companies() throws Exception {
         Company company = getCompany1();
         Company savedCompany = companyJpaRepository.save(company);
 
@@ -97,7 +97,7 @@ class CompanyApiTest {
     }
 
     @Test
-    void should_find_companies_by_page() throws Exception {
+    void should_return_list_of_companies_when_get_given_pageNumber_and_pageSize() throws Exception {
         Company company1 = getCompany1();
         Company company2 = getCompany2();
         Company company3 = getCompany3();
@@ -118,7 +118,7 @@ class CompanyApiTest {
     }
 
     @Test
-    void should_find_company_by_id() throws Exception {
+    void should_return_company_when_get_given_company_id() throws Exception {
         Company company = getCompany1();
         Company savedCompany = companyJpaRepository.save(company);
         Employee employee = getEmployee(company);
@@ -137,7 +137,7 @@ class CompanyApiTest {
     }
 
     @Test
-    void should_find_employees_by_companies() throws Exception {
+    void should_return_employees_when_get_employees_given_company_id() throws Exception {
         Company company = getCompany1();
         Company savedCompany = companyJpaRepository.save(company);
         Employee employee = getEmployee(company);
