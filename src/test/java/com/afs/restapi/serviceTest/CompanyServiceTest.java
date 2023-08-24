@@ -126,4 +126,10 @@ public class CompanyServiceTest {
 
         assertThat(employees).hasSameElementsAs(retrievedEmployees);
     }
+
+    @Test
+    void should_delete_company_when_delete_given_company_id() {
+        companyService.delete(1L);
+        verify(mockedCompanyRepository).deleteById(1L);
+    }
 }
