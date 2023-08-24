@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
@@ -39,4 +41,23 @@ public class EmployeeServiceTests {
         assertEquals(savedEmployee.getCompanyId(), createdEmployee.getCompanyId());
     }
 
+    @Test
+    void should_update_age_and_salary_of_employee_when_update_given_employee_and_updated_employee_info() {
+        Employee employee = new Employee(1L, "Delilah", 50, "Female", 10000);
+        Employee updatedEmployeeInfo = new Employee(null, "Namee", 51, "Female", 11000);
+        Employee updatedEmployee = new Employee(employee.getId(),employee.getName(),updatedEmployeeInfo.getAge(),employee.getGender(), updatedEmployeeInfo.getSalary());
+
+        when(mockedEmployeeRepository.findById(employee.getId())).thenReturn(Optional.of(employee));
+
+        employeeService.update(employee.getId(), updatedEmployeeInfo);
+
+        verify(mockedEmployeeRepository).save(argThat(tempEmployee -> {
+                assertEquals(updatedEmployee.getId(), tempEmployee.getId());
+                assertEquals(updatedEmployee.getName(), tempEmployee.getName());
+                assertEquals(updatedEmployee.getAge(), tempEmployee.getAge());
+                assertEquals(updatedEmployee.getGender(), tempEmployee.getGender());
+                assertEquals(updatedEmployee.getSalary(), tempEmployee.getSalary());
+                return true;
+        }));
+    }
 }
