@@ -1,11 +1,11 @@
 package com.afs.restapi.serviceTest;
 
 import com.afs.restapi.entity.Employee;
+import com.afs.restapi.exception.EmployeeNotFoundException;
 import com.afs.restapi.repository.EmployeeJpaRepository;
 import com.afs.restapi.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 public class EmployeeServiceTests {
-    @Autowired
     private EmployeeService employeeService;
 
     private EmployeeJpaRepository mockedEmployeeRepository;
@@ -80,7 +80,7 @@ public class EmployeeServiceTests {
         assertThat(employees).hasSameElementsAs(retrievedEmployees);
     }
 
-     @Test
+    @Test
     void should_return_correct_employee_when_findById_given_employee_id() {
         Employee employee = new Employee(1L, "Ababa", 20, "Female", 10000);
         when(mockedEmployeeRepository.findById(employee.getId())).thenReturn(Optional.of(employee));
@@ -93,6 +93,14 @@ public class EmployeeServiceTests {
         assertEquals(employee.getGender(), retrievedEmployee.getGender());
         assertEquals(employee.getSalary(), retrievedEmployee.getSalary());
         assertEquals(employee.getCompanyId(), retrievedEmployee.getCompanyId());
+    }
+
+    @Test
+    void should_return_employeeNotFoundException_when_findById_given_nonexistent_id() {
+        long nonexistentId = 100L;
+        when(mockedEmployeeRepository.findById(nonexistentId)).thenThrow(EmployeeNotFoundException.class);
+        assertThatThrownBy(() -> employeeService.findById(nonexistentId))
+                                  .isInstanceOf(EmployeeNotFoundException.class);
     }
 
     @Test
