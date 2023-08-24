@@ -1,12 +1,16 @@
 package com.afs.restapi.serviceTest;
 
 import com.afs.restapi.entity.Company;
+import com.afs.restapi.entity.Employee;
 import com.afs.restapi.repository.CompanyJpaRepository;
 import com.afs.restapi.repository.EmployeeJpaRepository;
 import com.afs.restapi.service.CompanyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,5 +86,34 @@ public class CompanyServiceTest {
 
         assertEquals(company.getId(), retrievedCompany.getId());
         assertEquals(company.getName(), retrievedCompany.getName());
+    }
+
+    @Test
+    void should_return_list_of_companies_when_findByPage_given_pageSize_and_pageNumber() {
+        List<Company> companies = new ArrayList<>();
+        companies.add(new Company(1L, "JAJAJA"));
+        companies.add(new Company(2L, "stuq"));
+        companies.add(new Company(3L, "woooo"));
+
+        Page<Company> companyPage = new PageImpl<>(companies, PageRequest.of(0, 3), companies.size());
+
+        when(mockedCompanyRepository.findAll(PageRequest.of(0,3))).thenReturn(companyPage);
+
+        List<Company> retrievedCompanies = companyService.findByPage(1,3);
+
+        assertThat(companies).hasSameElementsAs(retrievedCompanies);
+    }
+
+    @Test
+    void should_return_list_of_employees_when_findEmployeesByCompanyId_given_company_id() {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(1L, "Ababa", 20, "Female", 10000));
+        employees.add(new Employee(1L, "Brrr", 54, "Male", 2000));
+        employees.add(new Employee(1L, "Cheess", 35, "Male", 18000));
+        when(mockedEmployeeRepository.findAllByCompanyId(1L)).thenReturn(employees);
+
+        List<Employee> retrievedEmployees = companyService.findEmployeesByCompanyId(1L);
+
+        assertThat(employees).hasSameElementsAs(retrievedEmployees);
     }
 }
