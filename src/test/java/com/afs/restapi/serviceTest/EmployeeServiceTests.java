@@ -123,4 +123,10 @@ public class EmployeeServiceTests {
 
         assertThat(employees).hasSameElementsAs(retrievedEmployees);
     }
+
+    @Test
+    void should_delete_employee_when_delete_given_employee_id() {
+        employeeService.delete(1L);
+        verify(mockedEmployeeRepository).deleteById(1L);
+    }
 }
