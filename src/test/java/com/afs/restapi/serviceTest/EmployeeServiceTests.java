@@ -6,6 +6,9 @@ import com.afs.restapi.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,4 +108,19 @@ public class EmployeeServiceTests {
         assertThat(employees).hasSameElementsAs(retrievedEmployees);
     }
 
+    @Test
+    void should_return_list_of_employees_when_findByPage_given_pageSize_and_pageNumber() {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(1L, "Ababa", 20, "Female", 10000));
+        employees.add(new Employee(2L, "Brrr", 54, "Male", 2000));
+        employees.add(new Employee(3L, "Cheess", 35, "Male", 18000));
+
+        Page<Employee> employeePage = new PageImpl<>(employees, PageRequest.of(0, 3), employees.size());
+
+        when(mockedEmployeeRepository.findAll(PageRequest.of(0, 3))).thenReturn(employeePage);
+
+        List<Employee> retrievedEmployees = employeeService.findByPage(1, 3);
+
+        assertThat(employees).hasSameElementsAs(retrievedEmployees);
+    }
 }
