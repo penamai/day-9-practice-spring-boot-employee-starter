@@ -8,9 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.*;
 
 public class CompanyServiceTest {
     @Autowired
@@ -36,4 +38,23 @@ public class CompanyServiceTest {
         assertEquals(1L, createdCompany.getId());
         assertEquals("Company name", createdCompany.getName());
     }
+
+    @Test
+    void should_update_company_name_when_update_given_company() {
+        Company company = new Company(1L, "Brandname");
+        Company updatedCompanyInfo = new Company (null, "BrandNameNew");
+        Company updatedCompany = new Company(company.getId(), updatedCompanyInfo.getName());
+
+        when(mockedCompanyRepository.findById(company.getId())).thenReturn(Optional.of(company));
+        when(mockedCompanyRepository.save(updatedCompany)).thenReturn(updatedCompany);
+
+        companyService.update(company.getId(), updatedCompanyInfo);
+
+        verify(mockedCompanyRepository).save(argThat(tempCompany -> {
+                assertEquals(updatedCompany.getId(), tempCompany.getId());
+                assertEquals(updatedCompany.getName(), tempCompany.getName());
+                return true;
+        }));
+    }
+
 }
